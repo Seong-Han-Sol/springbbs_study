@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 인터페이스, 홈컨트롤러와 연동되서 사용할 xml의 파일을 만들기 전 주의사항 
+	 위 xml을 제대로 사용하기 위해서는 servlet-context.xml에 지정된 경로에 만들어줘야한다
+	 (눈에 익게 한번 확인해보는걸 추천) -->
+	 
+<mapper namespace="com.human.app.iBBS">
+	<!-- 게시글 등록 -->
+	<insert id='writebbs'>
+		insert into bbs(bbs_id,title,content,writer,passcode,created,updated)
+		values(seq_bbs_id.nextval,#{param1},#{param2},#{param3},#{param4},to_char(sysdate,'YYYY-MM-DD HH24:MI'),to_char(sysdate,'YYYY-MM-DD HH24:MI'))
+	</insert>
+	<!-- 게시물 전체 목록 가져오기 -->
+	<select id="getList" resultType="com.human.app.BBSrec">
+		select bbs_id,writer,title,content,created,updated
+		from bbs order by bbs_id
+	</select>
+	<!-- 게시물 수정 -->
+	<update id="updateBBS">
+		update bbs set title=#{param2}, content=#{param3}
+		where bbs_id=#{param1}
+	</update>
+	<!-- 게시글 삭제 -->
+	<delete id="deleteBBS">
+		delete from bbs where bbs_id=#{param1}
+	</delete>
+	<!-- 등록된 게시글 중 1개 선택 -->
+	<select id="getPost" resultType="com.human.app.BBSrec">
+		select bbs_id,title,content,writer,created,updated from bbs
+		where bbs_id=#{param1}
+	</select>
+</mapper>
