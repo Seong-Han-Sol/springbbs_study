@@ -103,15 +103,6 @@ public class HomeController {
 		//redirect -> 입력한 곳으로 방향을 돌림 즉, list.jsp화면으로 돌아감
 	}
 	//게시글 수정
-//	@RequestMapping(value = "/update/{bbs_id}", method = RequestMethod.POST)
-//	public String updateBBS(@PathVariable("bbs_id") int bbs_id , HttpServletRequest hsr) {
-//		String title = hsr.getParameter("title");
-//		String content = hsr.getParameter("content");
-//		iBBS bbs=sqlSession.getMapper(iBBS.class);
-//		bbs.updateBBS(bbs_id, title, content);
-//		return "redirect:/list";
-//	}
-	
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public String updateBBS(HttpServletRequest hsr) {
 		int bbs_id = Integer.parseInt(hsr.getParameter("bbs_id"));
