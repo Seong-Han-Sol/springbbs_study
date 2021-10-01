@@ -19,7 +19,7 @@
 	</select>
 	<!-- 게시물 수정 -->
 	<update id="updateBBS">
-		update bbs set title=#{param2}, content=#{param3}
+		update bbs set title=#{param2}, content=#{param3}, updated=to_char(sysdate,'YYYY-MM-DD HH24:MI')
 		where bbs_id=#{param1}
 	</update>
 	<!-- 게시글 삭제 -->
@@ -29,6 +29,11 @@
 	<!-- 등록된 게시글 중 1개 선택 -->
 	<select id="getPost" resultType="com.human.app.BBSrec">
 		select bbs_id,title,content,writer,created,updated from bbs
+		where bbs_id=#{param1}
+	</select>
+	<!-- 선택한 게시글 수정할 정보 가져오기  -->
+	<select id="getUpdate" resultType="com.human.app.UpdateRec">
+		select bbs_id,title,content,writer,passcode from bbs
 		where bbs_id=#{param1}
 	</select>
 </mapper>

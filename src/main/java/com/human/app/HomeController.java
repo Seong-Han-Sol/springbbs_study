@@ -73,9 +73,11 @@ public class HomeController {
 		return "new";
 	}
 	//수정 화면
-	@RequestMapping(value = "/update_view", method = RequestMethod.GET)
-	public String updateView() {
-		//
+	@RequestMapping(value = "/update_view/{bbs_id}", method = RequestMethod.GET)
+	public String updateView(@PathVariable("bbs_id") int bbs_id, Model model) {
+		iBBS bbs = sqlSession.getMapper(iBBS.class);
+		UpdateRec post2 = bbs.getUpdate(bbs_id);
+		model.addAttribute("post", post2);
 		return "update";
 	}
 	//게시글 추가
@@ -101,21 +103,30 @@ public class HomeController {
 		//redirect -> 입력한 곳으로 방향을 돌림 즉, list.jsp화면으로 돌아감
 	}
 	//게시글 수정
+//	@RequestMapping(value = "/update/{bbs_id}", method = RequestMethod.POST)
+//	public String updateBBS(@PathVariable("bbs_id") int bbs_id , HttpServletRequest hsr) {
+//		String title = hsr.getParameter("title");
+//		String content = hsr.getParameter("content");
+//		iBBS bbs=sqlSession.getMapper(iBBS.class);
+//		bbs.updateBBS(bbs_id, title, content);
+//		return "redirect:/list";
+//	}
+	
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public String updateBBS(HttpServletRequest hsr) {
-		int bbsID = Integer.parseInt(hsr.getParameter("bbs_id")); //여기서 받아오는 파라미터는 인터페이스 안에 있는 추상메서드의 변수
+		int bbs_id = Integer.parseInt(hsr.getParameter("bbs_id"));
 		String title = hsr.getParameter("title");
 		String content = hsr.getParameter("content");
 		iBBS bbs=sqlSession.getMapper(iBBS.class);
-		bbs.updateBBS(bbsID, title, content);
+		bbs.updateBBS(bbs_id, title, content);
 		return "redirect:/list";
 	}
+	
 	//게시글 삭제
-	@RequestMapping(value = "/delete", method = RequestMethod.GET)
-	public String deleteBBS(HttpServletRequest hsr) {
-		int bbsId=Integer.parseInt(hsr.getParameter("bbs_id"));
+	@RequestMapping(value = "/delete/{bbs_id}", method = RequestMethod.GET)
+	public String deleteBBS(@PathVariable("bbs_id") int bbs_id) {
 		iBBS bbs=sqlSession.getMapper(iBBS.class);
-		bbs.deleteBBS(bbsId);
+		bbs.deleteBBS(bbs_id);
 		return "redirect:/list";
 	}
 }

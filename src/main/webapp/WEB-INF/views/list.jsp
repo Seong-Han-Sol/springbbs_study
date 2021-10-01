@@ -7,7 +7,17 @@
 <meta charset="UTF-8">
 <title>게시글 목록</title>
 <style>
-
+.table1 {
+	border-collapse: collapse;
+}
+.table1 td {
+	border: 1px solid;
+}
+.table1 th {
+	color : white;
+	background-color: black;
+	border: 1px solid yellow;
+}
 </style>
 </head>
 <body>
@@ -29,7 +39,8 @@
               </div>
               <!-- /.card-header -->
               <div class="tableBoby">
-                <table class="table table-hover" border="1">
+              <table align="center" valign="top">
+                <table class="table1">
                   <thead>
                     <tr>
                       <th>번호</th>
@@ -53,6 +64,10 @@
                   	</c:forEach>
                   </tbody>
                 </table>
+                		<tr>
+                		<td><input type="button" value="글쓰기" id="btnNew"> </td>
+                		</tr>
+                </table>
               </div>
               <!-- /.card-body -->
             </div>
@@ -63,10 +78,14 @@
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 <script>
 $(document)
-.on('click','tr',function(){
+.on('click','.table1 tr',function(){
 	let bbs_id=$(this).find('td:eq(0)').text();
-	console.log('bbs_id['+bbs_id+']');
+	//console.log('bbs_id['+bbs_id+']');
 	document.location="/app/view/"+bbs_id;
+	return false;
+})
+.on('click','#btnNew',function(){
+	document.location="/app/new";
 	return false;
 })
 </script>

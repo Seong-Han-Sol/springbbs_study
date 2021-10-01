@@ -26,13 +26,22 @@
 	</tr>
 	<tr>
 		<td>비밀번호</td>
-		<td><input type="text" name=passcode></td>
+		<td><input type="password" name=passcode></td>
 	</tr>
 	<tr>
 		<td colspan="2"><input type="submit" value="등록"> 
-		<input type="button" value="취소"></td>
+		<input type="button" value="취소" id="btnCancel"></td>
 	</tr>
 </table>
 </form>
 </body>
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script>
+$(document)
+.on('click','#btnCancel',function(){
+	//document.location="/app/list";
+	$(location).attr('href','list');
+	return false;
+})
+</script>
 </html>

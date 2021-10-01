@@ -13,4 +13,6 @@ public interface iBBS {
 	void deleteBBS(int bbs_id);
 	//게시글 1개 선택
 	BBSrec getPost(int bbs_id);
+	//수정할 게시글 정보 불러오기
+	UpdateRec getUpdate(int bbs_id);
 }
