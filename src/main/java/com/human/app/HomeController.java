@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
 import org.json.simple.JSONArray;
@@ -49,15 +50,68 @@ public class HomeController {
 	
 	//list.jsp를 리턴해 보여주는 코드
 	@RequestMapping(value ="/list", method = RequestMethod.GET)
-	public String selectBBS(Model model) {
+	public String selectBBS(HttpServletRequest hsr, Model model) {
 		//화면에 DB에 저장된 데이터를 뿌려줘야하기 때문에 model에 값을 담는다
 		iBBS bbs=sqlSession.getMapper(iBBS.class);
 		ArrayList<BBSrec> bbsList = bbs.getList();
-		for (int i = 0; i < bbsList.size(); i++) {
-			System.out.println(i);
-		}
+		//로그인 관련 코드
+		  HttpSession session = hsr.getSession(); 
+		  String userid=(String)session.getAttribute("userId");  //session.setAttribute("userId", userId);에서 설정한 값을 가져옴
+		  System.out.println("Userid="+userid);
+		  if(userid == null || userid.equals("")) { //로그인 아닐때는 로그인 버튼 보여주기
+		  	model.addAttribute("loginCheck", "0"); 
+		  }else { //로그인일 때는 로그인 버튼 사라지고 새글쓰기 버튼 나오게 하기 jsp 파일 코드랑 같이 살펴보기
+		  	model.addAttribute("loginCheck", "1"); 
+		  }
+		 
+		//모델에 값을 담아줌 (아래)
 		model.addAttribute("BBSList", bbsList);
 		return "list";
+	}
+	//login.jsp를 리턴해 보여주는 코드
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String loginView() {
+		return "login";
+	}
+	//login submit 구현하기
+	@RequestMapping(value = "/checkLogin", method = RequestMethod.POST)
+	public String userLogin(HttpServletRequest hsr) {
+		String userId = hsr.getParameter("uId"); //login.jsp input태그 name값
+		String passcode = hsr.getParameter("uPw");
+		iMember member = sqlSession.getMapper(iMember.class);
+		int n =member.checkUser(userId, passcode);
+		if(n>0) {
+			HttpSession session = hsr.getSession();
+			session.setAttribute("userId", userId);
+			return "redirect:/list";
+		}else {
+			return "redirect:/login";
+		}
+	}
+	//logout
+	@RequestMapping(value = "/logout")
+	public String logout(HttpServletRequest hsr) {
+		HttpSession session=hsr.getSession();
+		session.invalidate();
+		return "redirect:list";
+	}
+	//signin.jsp를 리턴해 보여주는 코드
+	@RequestMapping(value = "/singUp", method = RequestMethod.GET)
+	public String singin() {
+		
+		return "singUp";
+	}
+	//회원가입 submit구현하기
+	@RequestMapping(value = "/join", method = RequestMethod.POST)
+	public String newJoin(HttpServletRequest hsr) {
+		String realName = hsr.getParameter("realName"); //singUp input태그 name값 가져오는것
+		String newId = hsr.getParameter("newId");
+		String pw1 = hsr.getParameter("pw1");
+		//위에 입력한 파라미터 값을 제대로 가져왔는지 확인하기 위한 디버깅 코드
+		System.out.println("name["+realName+"] id["+newId+"] passcode["+pw1+"]");
+		iMember member = sqlSession.getMapper(iMember.class);
+		member.newUser(realName, newId, pw1);
+		return "redirect:/login";
 	}
 	//view.jsp를 리턴해 보여주는 코드
 	@RequestMapping(value = "/view/{bbs_id}", method = RequestMethod.GET)

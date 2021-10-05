@@ -40,6 +40,16 @@
               <!-- /.card-header -->
               <div class="tableBoby">
               <table align="center" valign="top">
+              	<tr>
+              		<td>
+		              	<c:if test="${loginCheck eq '0'}">
+		              		<input type="button" value="로그인" id="btnLogin">
+		              	</c:if>
+		              	<c:if test="${loginCheck eq '1'}">
+		              		<input type="button" value="로그아웃" id="btnLogout">
+		              	</c:if>
+              		</td>
+              	</tr>
                 <table class="table1">
                   <thead>
                     <tr>
@@ -65,7 +75,11 @@
                   </tbody>
                 </table>
                 		<tr>
-                		<td><input type="button" value="글쓰기" id="btnNew"> </td>
+	                		<td>
+	                			<c:if test="${loginCheck eq '1'}">
+	                				<input type="button" value="글쓰기" id="btnNew">
+	                			</c:if>
+	                		</td>
                 		</tr>
                 </table>
               </div>
@@ -86,6 +100,14 @@ $(document)
 })
 .on('click','#btnNew',function(){
 	document.location="/app/new";
+	return false;
+})
+.on('click','#btnLogin',function(){
+	document.location="/app/login";
+	return false;
+})
+.on('click','#btnLogout',function(){
+	document.location = "/app/logout";
 	return false;
 })
 </script>

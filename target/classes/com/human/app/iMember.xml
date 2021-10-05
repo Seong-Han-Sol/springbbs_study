@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.human.app.iMember">
+	<!-- 회원가입 정보 DB에 넣기 -->
+	<insert id="newUser">
+		insert into bbsmember(name,user_id,passcode)
+		values(#{param1},#{param2},#{param3})
+	</insert>
+	<!-- 로그인시 등록된 회원인지 조회하기 -->
+	<select id="checkUser" resultType="int">
+		select count(*) from bbsmember where user_id=#{param1} and passcode=#{param2}
+	</select>
+</mapper>
