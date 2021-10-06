@@ -5,7 +5,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>게시글 목록</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+
 <style>
 .table1 {
 	border-collapse: collapse;
@@ -50,7 +53,7 @@
 		              	</c:if>
               		</td>
               	</tr>
-                <table class="table1">
+                <table class="table1"  width="85%">
                   <thead>
                     <tr>
                       <th>번호</th>
@@ -67,7 +70,7 @@
                   		<td><c:out value="${rec.bbs_id}"/></td> <!--xml테이블 스키마명과 똑같은 이름으로 변수 적어줌 -->
                   		<td><c:out value="${rec.writer}"/></td>
                   		<td><c:out value="${rec.title}"/></td>
-                  		<td><c:out value="${rec.content}"/></td>
+                  		<td width="25%"><c:out value="${rec.content}"/></td>
                   		<td><c:out value="${rec.created}"/></td>
                   		<td><c:out value="${rec.updated}"/></td>
                   		</tr>

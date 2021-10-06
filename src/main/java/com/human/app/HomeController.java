@@ -1,22 +1,18 @@
 package com.human.app;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -57,13 +53,12 @@ public class HomeController {
 		//로그인 관련 코드
 		  HttpSession session = hsr.getSession(); 
 		  String userid=(String)session.getAttribute("userId");  //session.setAttribute("userId", userId);에서 설정한 값을 가져옴
-		  System.out.println("Userid="+userid);
 		  if(userid == null || userid.equals("")) { //로그인 아닐때는 로그인 버튼 보여주기
 		  	model.addAttribute("loginCheck", "0"); 
 		  }else { //로그인일 때는 로그인 버튼 사라지고 새글쓰기 버튼 나오게 하기 jsp 파일 코드랑 같이 살펴보기
-		  	model.addAttribute("loginCheck", "1"); 
+		  	model.addAttribute("loginCheck", "1");
+		  	model.addAttribute("userid", userid);
 		  }
-		 
 		//모델에 값을 담아줌 (아래)
 		model.addAttribute("BBSList", bbsList);
 		return "list";
@@ -123,8 +118,9 @@ public class HomeController {
 	}
 	//new.jsp를 리턴해 보여주는 코드
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String brandNew() {
-		return "new";
+	public String brandNew(HttpServletRequest hsr) {
+		if(loginUser(hsr)) return "new";
+		return "redirect:/list";
 	}
 	//수정 화면
 	@RequestMapping(value = "/update_view/{bbs_id}", method = RequestMethod.GET)
@@ -137,6 +133,11 @@ public class HomeController {
 	//게시글 추가
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String insertBBS(HttpServletRequest hsr) {
+		//로그인이 안되어있으면 접근을 못하게 만드는 메서드를 호출
+		if(!loginUser(hsr)) return "redirect:/list";
+		
+		HttpSession s = hsr.getSession();
+		String userid=(String)s.getAttribute("userid");
 		String ntitle = hsr.getParameter("title"); //new.jsp form 태그 안에 있는 name의 값을 파라미터로 가져옴
 		String nContent = hsr.getParameter("content");
 		String nWriter = hsr.getParameter("writer");
@@ -159,6 +160,7 @@ public class HomeController {
 	//게시글 수정
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public String updateBBS(HttpServletRequest hsr) {
+		if(!loginUser(hsr)) return "redirect:/list";
 		int bbs_id = Integer.parseInt(hsr.getParameter("bbs_id"));
 		String title = hsr.getParameter("title");
 		String content = hsr.getParameter("content");
@@ -173,5 +175,44 @@ public class HomeController {
 		iBBS bbs=sqlSession.getMapper(iBBS.class);
 		bbs.deleteBBS(bbs_id);
 		return "redirect:/list";
+	}
+	//댓글 아이작스
+	@RequestMapping(value = "/ReplyControl", method = RequestMethod.POST)
+	@ResponseBody
+	public String doReplyControl(HttpServletRequest hsr) {
+		//여기에 댓글에 관련된 CRUD를 모두 구현할 예정
+		
+		String result="";
+		try {
+			String optype=hsr.getParameter("optype");
+			String reply_content=hsr.getParameter("reply_content");
+			int bbs_id=Integer.parseInt(hsr.getParameter("bbs_id"));
+			HttpSession s=hsr.getSession();
+			String userid=(String)s.getAttribute("userId");
+			if(optype.equals("add")) {
+				//댓글등록 MyBatis 호출
+				iReply reply =sqlSession.getMapper(iReply.class);
+				reply.addReply(bbs_id, reply_content, userid);
+			} else if(optype.equals("delete")) {
+				//댓글삭제
+			} else if(optype.equals("update")) {
+				//댓글 수정
+			}
+			result="ok";
+		} catch(Exception e) {
+			result="fail";
+		} finally {
+			return result;
+		}
+	}
+	//로그인 관련 해킹 방지 코드 -> 로그인이 안된 상태로 다른 페이지 url복사할 경우 팅겨나가게 하기
+	public boolean loginUser(HttpServletRequest hsr) {
+		HttpSession s=hsr.getSession();
+		String userid=(String) s.getAttribute("userId");
+		if(userid==null || userid.equals("")) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }
