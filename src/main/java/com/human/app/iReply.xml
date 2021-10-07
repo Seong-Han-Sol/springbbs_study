@@ -6,18 +6,24 @@
 <mapper namespace="com.human.app.iReply">
 	<!-- 댓글추가 -->
 	<insert id="addReply">
-		insert into reply values(seq_reply_id.nextval,${param1},${param2},${param3},
-		to_char(sysdate,'YYYY-MM-DD HH24:MI'),to_char(sysdate,'YYYY-MM-DD HH24:MI'))
+		insert into reply
+		values(seq_reply_id.nextval,#{param1},#{param2},#{param3},to_char(sysdate,'YYYY-MM-DD HH24:MI'),to_char(sysdate,'YYYY-MM-DD HH24:MI'))
 	</insert>
 	<!-- 댓글 리스트 출력 -->
-	<select id="">
-		SELECT REPLY_ID, BBS_ID, CONTENT, WRTIER, CREATED, UPDATED
+	<select id="getReplyList" resultType="com.human.app.Reply">
+		SELECT REPLY_ID, BBS_ID, CONTENT, WRITER, CREATED, UPDATED
 		FROM REPLY
-		WHERE BBS_ID =#{param1}
-		ORDER BY CREATED DESC
+		WHERE BBS_ID=#{param1}
+		ORDER BY REPLY_ID DESC
 	</select>
+	<!-- 댓글 삭제 -->
+ 	<delete id="deleteReply">
+		delete from reply where reply_id=#{param1}
+	</delete>
 	<!-- 댓글 수정 -->
-	<update id="">
-		
+	<update id="updateReply">
+		UPDATE reply
+		set content=#{param2}, UPDATED=to_char(sysdate,'YYYY-MM-DD HH24:MI')
+		where reply_id=#{param1}
 	</update>
 </mapper>

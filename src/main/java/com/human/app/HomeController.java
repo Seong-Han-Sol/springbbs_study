@@ -111,9 +111,15 @@ public class HomeController {
 	//view.jsp를 리턴해 보여주는 코드
 	@RequestMapping(value = "/view/{bbs_id}", method = RequestMethod.GET)
 	public String selectOneBBS(@PathVariable("bbs_id") int bbs_id, Model model) {
+		//게시물 내용
 		iBBS bbs = sqlSession.getMapper(iBBS.class);
 		BBSrec post = bbs.getPost(bbs_id);
 		model.addAttribute("post", post);
+		
+		//댓글 내용
+		iReply reply = sqlSession.getMapper(iReply.class);
+		ArrayList<Reply> replyList = reply.getReplyList(bbs_id);
+		model.addAttribute("replyList", replyList);
 		return "view";
 	}
 	//new.jsp를 리턴해 보여주는 코드
@@ -177,34 +183,43 @@ public class HomeController {
 		return "redirect:/list";
 	}
 	//댓글 아이작스
-	@RequestMapping(value = "/ReplyControl", method = RequestMethod.POST)
+	@RequestMapping(value = "/addReply", method = RequestMethod.POST)
 	@ResponseBody
-	public String doReplyControl(HttpServletRequest hsr) {
-		//여기에 댓글에 관련된 CRUD를 모두 구현할 예정
+	public String doAddReply(HttpServletRequest hsr) {
+		String optype=hsr.getParameter("optype");
+		String replyContent=hsr.getParameter("content");
+		int bbs_id=Integer.parseInt(hsr.getParameter("bbs_id"));
+		HttpSession session = hsr.getSession();
+		String userid=(String) session.getAttribute("userId");
+		System.out.println("optype="+optype+",bbs_id="+bbs_id+",content="+replyContent+",user_id="+userid);
+		//MyBatis호출
+		iReply reply = sqlSession.getMapper(iReply.class);
+		reply.addReply(bbs_id, replyContent, userid);
 		
-		String result="";
-		try {
-			String optype=hsr.getParameter("optype");
-			String reply_content=hsr.getParameter("reply_content");
-			int bbs_id=Integer.parseInt(hsr.getParameter("bbs_id"));
-			HttpSession s=hsr.getSession();
-			String userid=(String)s.getAttribute("userId");
-			if(optype.equals("add")) {
-				//댓글등록 MyBatis 호출
-				iReply reply =sqlSession.getMapper(iReply.class);
-				reply.addReply(bbs_id, reply_content, userid);
-			} else if(optype.equals("delete")) {
-				//댓글삭제
-			} else if(optype.equals("update")) {
-				//댓글 수정
-			}
-			result="ok";
-		} catch(Exception e) {
-			result="fail";
-		} finally {
-			return result;
-		}
+		return "ok";
 	}
+	@RequestMapping(value = "/updateReply", method = RequestMethod.POST)
+	@ResponseBody
+	public String doUpdateReply(HttpServletRequest hsr) {
+		String optype=hsr.getParameter("optype");
+		String replyContent=hsr.getParameter("content");
+		int reply_id=Integer.parseInt(hsr.getParameter("reply_id"));
+		System.out.println("optype="+optype+",content="+replyContent+",reply_id="+reply_id);
+		iReply reply = sqlSession.getMapper(iReply.class);
+		reply.updateReply(reply_id, replyContent);
+		return "ok";
+	}
+	@RequestMapping(value = "/deleteReply", method = RequestMethod.POST)
+	@ResponseBody
+	public String doDeleteReply(HttpServletRequest hsr) {
+		String optype=hsr.getParameter("optype");
+		int reply_id=Integer.parseInt(hsr.getParameter("reply_id"));
+		System.out.println("optype="+optype+",reply_id="+reply_id);
+		iReply reply = sqlSession.getMapper(iReply.class);
+		reply.deleteReply(reply_id);
+		return "ok";
+	}
+
 	//로그인 관련 해킹 방지 코드 -> 로그인이 안된 상태로 다른 페이지 url복사할 경우 팅겨나가게 하기
 	public boolean loginUser(HttpServletRequest hsr) {
 		HttpSession s=hsr.getSession();
