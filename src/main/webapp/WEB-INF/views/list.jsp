@@ -84,6 +84,9 @@
 	                			</c:if>
 	                		</td>
                 		</tr>
+                		<tr>
+                		<td colspan="2" style="text-align: center;">${direct}</td>
+                		</tr>
                 </table>
               </div>
               <!-- /.card-body -->

@@ -9,13 +9,17 @@
 <mapper namespace="com.human.app.iBBS">
 	<!-- 게시글 등록 -->
 	<insert id='writebbs'>
-		insert into bbs(bbs_id,title,content,writer,passcode,created,updated)
+		insert into bbs(bbs_id,title,content,writer,img_loc,created,updated)
 		values(seq_bbs_id.nextval,#{param1},#{param2},#{param3},#{param4},to_char(sysdate,'YYYY-MM-DD HH24:MI'),to_char(sysdate,'YYYY-MM-DD HH24:MI'))
 	</insert>
-	<!-- 게시물 전체 목록 가져오기 -->
+	<!-- 게시물 전체 목록 가져오기 (아주 간단하게 페이징 실습해보기) -->
 	<select id="getList" resultType="com.human.app.BBSrec">
-		select bbs_id,writer,title,content,created,updated
-		from bbs order by bbs_id
+		<!-- select bbs_id,writer,title,content,created,updated
+		from bbs order by bbs_id -->
+		select rnum, bbs_id, title, content, writer, created, updated
+		from(select rownum as rnum, bbs_id, title, content, writer, created, updated
+			from bbs order by created desc)
+		where rnum between #{param1} and #{param2}
 	</select>
 	<!-- 게시물 수정 -->
 	<update id="updateBBS">
@@ -28,7 +32,7 @@
 	</delete>
 	<!-- 등록된 게시글 중 1개 선택 -->
 	<select id="getPost" resultType="com.human.app.BBSrec">
-		select bbs_id,title,content,writer,created,updated from bbs
+		select bbs_id,title,content,writer,img_loc,created,updated from bbs
 		where bbs_id=#{param1}
 	</select>
 	<!-- 선택한 게시글 수정할 정보 가져오기  -->

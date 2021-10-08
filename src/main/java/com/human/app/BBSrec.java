@@ -9,16 +9,19 @@ public class BBSrec {
 	private String writer;
 	private String title;
 	private String content;
+	private String img_loc;
 	private String created;
 	private String updated;
 	
 	public BBSrec() {}
 
-	public BBSrec(int bbs_id, String writer, String title, String content, String created, String updated) {
+	public BBSrec(int bbs_id, String writer, String title, String content, String img_loc, String created,
+			String updated) {
 		this.bbs_id = bbs_id;
 		this.writer = writer;
 		this.title = title;
 		this.content = content;
+		this.img_loc = img_loc;
 		this.created = created;
 		this.updated = updated;
 	}
@@ -55,6 +58,14 @@ public class BBSrec {
 		this.content = content;
 	}
 
+	public String getImg_loc() {
+		return img_loc;
+	}
+
+	public void setImg_loc(String img_loc) {
+		this.img_loc = img_loc;
+	}
+
 	public String getCreated() {
 		return created;
 	}
@@ -70,5 +81,7 @@ public class BBSrec {
 	public void setUpdated(String updated) {
 		this.updated = updated;
 	}
+
+	
 
 }

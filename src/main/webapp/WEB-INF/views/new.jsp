@@ -8,7 +8,7 @@
 <title>게시글 작성</title>
 </head>
 <body>
-<form method="post" action="/app/save">
+<form method="post" action="/app/save" id="frmNew" enctype="multipart/form-data">
 <table>
 	<tr>
 		<td>제목</td>
@@ -25,8 +25,8 @@
 		<td><input type="text" name=writer></td>
 	</tr>
 	<tr>
-		<td>비밀번호</td>
-		<td><input type="password" name=passcode></td>
+	<td>업로드 화일</td>
+	<td><input type="file" name="ufile" id="ufile"></td>
 	</tr>
 	<tr>
 		<td colspan="2"><input type="submit" value="등록"> 

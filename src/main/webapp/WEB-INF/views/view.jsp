@@ -31,7 +31,11 @@
 		<td>내용</td>
 	</tr>
 	<tr>
-		<td colspan="2">${post.content}</textarea></td>
+		<td colspan="2">${post.content}
+		<c:if test="${post.img_loc ne ''}">
+			<br><img src="/app/resources/${post.img_loc}"
+		</c:if>
+		</td>
 	</tr>
 	<tr>
 		<td>작성자</td>

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public interface iBBS {
 	//게시글 등록
-	void writebbs(String title, String content, String writer, String passcode);
+	void writebbs(String title, String content, String writer, String img_log);
 	//게시글 전체 목록 보기위한 ArrayList
-	ArrayList<BBSrec> getList();
+	ArrayList<BBSrec> getList(int start, int end);
 	//게시글 수정
 	void updateBBS(int bbs_id, String title, String content);
 	//게시글 삭제
